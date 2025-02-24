@@ -244,8 +244,16 @@ def send_job(client):
     
     logger.info(f"Sending job {job_id:x} to client {client.get('address')} with bits {bits}")
     
-    # Standard simplified values that should work with most miners
-    coinbase1 = "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff20"
+    # Create a custom coinbase with your miner tag
+    # First, let's create the miner tag in hex
+    miner_tag = "solo mined by ca98am79"
+    tag_hex = miner_tag.encode('utf-8').hex()
+    
+    # Create the scriptSig length (1 byte) plus the tag length
+    script_len = format(len(miner_tag) + 4, 'x').zfill(2)  # +4 for the height bytes
+    
+    # Create the coinbase parts with your custom tag
+    coinbase1 = f"01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff{script_len}04ffff001d01{tag_hex}"
     coinbase2 = "ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000"
     
     job_notification = {
